@@ -11,8 +11,8 @@ first, so the app works with no connection, and they sync to the API when the ph
 
 | Name | Student ID | Initial responsibility |
 |------|-----------|------------------------|
-| Moath Haimour | 202182130 | App architecture, theme, navigation, session timer, API client and sync |
-| Abdulkarim Hussain Althani | 201948610 | SQLite schema and providers, ASP.NET Core Web API, SQL Server database |
+| Moath Haimour | 202182130 | ASP.NET Core Web API, SQL Server database, EF Core migrations and JWT, API client and sync |
+| Abdulkarim Hussain Althani | 201948610 | App architecture and theme, SQLite schema, state providers, session timer logic |
 | Abdulrazaq Musaab Ahmad | 202267720 | Dashboard, calendar, history and sign-in screens, shared widgets |
 | Osama Ahmed Alghamdi | 202172210 | Notifications, statistics, export to PDF/CSV/JSON, testing, documentation |
 
