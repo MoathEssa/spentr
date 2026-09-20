@@ -3,9 +3,10 @@
 Group project for **SWE 463 — Mobile Application Development**, **Group 02**.
 A Flutter app for Android and iOS with an ASP.NET Core and SQL Server back-end.
 
-Spentr is a time and earnings diary for part-time and hourly workers. One tap records a shift, and
-the app turns the hours into money at the user's own hourly rate. Shifts are written to the phone
-first, so the app works with no connection, and they sync to the API when the phone is online.
+Spentr is a time and earnings diary for freelancers and part-time programmers. One tap records a
+shift, and the app turns the hours into money at the user's own hourly rate, tagged by client or
+project. Shifts are written to the phone first, so nothing depends on a connection, and they sync to
+the API when the phone is online.
 
 ## Team
 
