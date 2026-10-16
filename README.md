@@ -26,6 +26,7 @@ Project layout:
 - `app/` — Flutter client (Phase 2 starter: theme, models and placeholder navigation).
 - `backend/` — ASP.NET Core Web API (planned).
 - `Spentr-Preview.html` — standalone HTML interface prototype.
+- `docs/phase2/` — [Phase 2 technical design](docs/phase2/Group02_Phase2_Technical_Design.md) (widget plan, data model, state management, project structure) and screenshots of the starter app running on Android.
 
 ## Flutter Starter App
 
