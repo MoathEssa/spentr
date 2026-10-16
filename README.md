@@ -19,13 +19,58 @@ Spentr is a time and earnings diary for freelancers and part-time programmers. O
 
 **Phase 2 — User Interface and Technical Design.**
 
-The Phase 1 proposal and Phase 2 interface designs and prototype are prepared. The remaining Phase 2 work includes the technical design documentation, runnable Flutter starter project, and final PDF report.
+The Phase 1 proposal, the Phase 2 interface designs and prototype, and the runnable Flutter starter project are in the repository. The final Phase 2 PDF report is being assembled.
 
-Planned project layout:
+Project layout:
 
-- `app/` — Flutter client.
-- `backend/` — ASP.NET Core Web API.
+- `app/` — Flutter client (Phase 2 starter: theme, models and placeholder navigation).
+- `backend/` — ASP.NET Core Web API (planned).
 - `Spentr-Preview.html` — standalone HTML interface prototype.
+
+## Flutter Starter App
+
+The starter app opens and runs without compilation errors. Every main screen in the Figma navigation map exists as a placeholder that shows its purpose, the interface states designed for it, and buttons for its navigation. Real features are built in Phase 3.
+
+### Run it
+
+```bash
+cd app
+flutter pub get
+flutter run
+```
+
+Built with Flutter 3.27 / Dart 3.6. Tested on an Android 15 phone; `flutter analyze` reports no issues and `flutter test` passes.
+
+### Structure
+
+```
+app/lib/
+  main.dart                 entry point
+  app.dart                  MaterialApp, light and dark theme, routes
+  core/
+    routes.dart             named routes for every screen
+    theme/                  colours and Material 3 theme from the Figma design system
+  data/
+    models/                 Shift, ActiveSession, AppSettings, User, SyncStatus
+    local/                  SQLite database and settings store (Phase 3)
+    remote/                 ApiClient, AuthService, SyncService (Phase 3)
+    services/               notifications, biometrics, export (Phase 3)
+  state/                    Provider ChangeNotifiers (Phase 3)
+  ui/
+    screens/                one file per screen or bottom sheet
+    widgets/                shared widgets (placeholder view, confirm dialog)
+```
+
+Navigation: Sign in → Home. `RootShell` holds the four tabs (Home, History, Statistics, Settings) in an `IndexedStack` behind a Material 3 `NavigationBar`. Other screens are pushed with named routes; Day details and Filter are modal bottom sheets.
+
+## Packages
+
+| Package | Purpose | Licence |
+|---------|---------|---------|
+| `cupertino_icons` | Default iOS-style icon font from the Flutter template | MIT |
+| `flutter_lints` (dev) | Recommended lint rules used by `flutter analyze` | BSD-3-Clause |
+
+No other packages are added yet. The packages planned for Phase 3 (`provider`, `sqflite`, `shared_preferences`, `flutter_secure_storage`, `http`, `connectivity_plus`, `flutter_local_notifications`, `intl`, and for the optional features `fl_chart`, `pdf`, `printing`, `share_plus`, `file_picker`, `local_auth`) will be added to this table with their purpose and licence when they are introduced.
 
 ## UI Design and Prototype
 
@@ -53,7 +98,7 @@ The prototype uses illustrative data and prepared screen transitions. Authentica
 
 As required by the course policy, we disclose the following assistance:
 
-- **Anthropic Claude** helped draft and format the Phase 1 proposal and provided small code and debugging suggestions.
+- **Anthropic Claude** helped draft and format the Phase 1 proposal, provided small code and debugging suggestions, generated the Phase 2 Flutter starter project (placeholder screens, routes, theme and model classes), and drafted the Phase 2 technical design sections (widget plan, data model and state management plan).
 - **ChatGPT** helped extract the Phase 1 design context, generate initial interface designs, create the HTML prototype and Figma import script, and draft README updates.
 
 The group is responsible for reviewing and revising AI-assisted material, ensuring its use follows the course policy, and accurately recording each member's actual contribution. Each member is responsible for understanding and explaining the work they submit.
