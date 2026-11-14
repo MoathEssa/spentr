@@ -122,6 +122,7 @@ The shift-record feature now includes:
 | provider | Shared shift state and UI updates | MIT |
 | sqflite | Local SQLite persistence | BSD-2-Clause |
 | path | Database file-path handling | BSD-3-Clause |
+| shared_preferences | Hourly rate, currency, and other settings | BSD-3-Clause |
 
 Resolved package versions are recorded in app/pubspec.lock.
 
@@ -142,5 +143,6 @@ As required by the course policy, we disclose the following assistance:
 
 - **Anthropic Claude** helped draft and format the Phase 1 proposal, provided small code and debugging suggestions, generated the Phase 2 Flutter starter project (placeholder screens, routes, theme and model classes), and drafted the Phase 2 technical design sections (widget plan, data model and state management plan).
 - **ChatGPT** helped extract the Phase 1 design context, generate initial interface designs, create the HTML prototype and Figma import script, and draft README updates.
+- **Cursor Grok** assisted the Phase 3 app foundation, hourly-rate persistence, earnings calculation, and timer earnings display. The group reviews this work, and each member remains responsible for the code they submit.
 
 The group is responsible for reviewing and revising AI-assisted material, ensuring its use follows the course policy, and accurately recording each member's actual contribution. Each member is responsible for understanding and explaining the work they submit.

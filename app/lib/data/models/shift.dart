@@ -29,8 +29,12 @@ class Shift {
 
   Duration get duration => Duration(milliseconds: durationMs);
   Duration get paused => end.difference(start) - duration;
-  double earnings(double hourlyRate) =>
+
+  /// Worked-time earnings. [durationMs] already excludes paused time.
+  static double earningsFor(int durationMs, double hourlyRate) =>
       durationMs / Duration.millisecondsPerHour * hourlyRate;
+
+  double earnings(double hourlyRate) => earningsFor(durationMs, hourlyRate);
 
   void validate() {
     if (!end.isAfter(start)) {

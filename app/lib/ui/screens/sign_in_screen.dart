@@ -35,8 +35,7 @@ class _SignInScreenState extends State<SignInScreen> {
             PlaceholderAction(
               'Create account',
               Icons.person_add_alt_1,
-              () =>
-                  Navigator.pushReplacementNamed(context, AppRoutes.rateSetup),
+              () => Navigator.pushNamed(context, AppRoutes.rateSetup),
               primary: true,
             )
           else

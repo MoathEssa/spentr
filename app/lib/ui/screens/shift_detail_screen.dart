@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../../core/money.dart';
 import '../../core/routes.dart';
 import '../../core/shift_formatters.dart';
+import '../../state/settings_provider.dart';
 import '../../state/shift_provider.dart';
 import '../widgets/confirm_dialog.dart';
 
@@ -29,6 +31,7 @@ class ShiftDetailScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final store = context.watch<ShiftProvider>();
+    final settings = context.watch<SettingsProvider>();
     final shift = shiftId == null ? null : store.findById(shiftId!);
     return Scaffold(
       appBar: AppBar(title: const Text('Shift details')),
@@ -41,6 +44,10 @@ class ShiftDetailScreen extends StatelessWidget {
               : ListView(padding: const EdgeInsets.all(24), children: [
                   Text(shiftDuration(shift.duration),
                       style: Theme.of(context).textTheme.headlineLarge),
+                  const SizedBox(height: 8),
+                  Text(settings.hasRate
+                      ? '${formatMoney(shift.earnings(settings.hourlyRate), settings.currencyCode)} · ${formatMoney(settings.hourlyRate, settings.currencyCode)} / hour'
+                      : 'Set an hourly rate in Settings to see earnings.'),
                   const SizedBox(height: 24),
                   _item('Start', shiftDateTime(shift.start)),
                   _item('End', shiftDateTime(shift.end)),

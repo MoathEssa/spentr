@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../../core/money.dart';
 import '../../core/shift_formatters.dart';
 import '../../data/models/shift.dart';
+import '../../state/settings_provider.dart';
 import '../../state/shift_provider.dart';
 
 class ShiftFormScreen extends StatefulWidget {
@@ -38,6 +40,20 @@ class _ShiftFormScreenState extends State<ShiftFormScreen> {
     _tags.dispose();
     _links.dispose();
     super.dispose();
+  }
+
+  String _earningsLine(Duration worked, SettingsProvider settings) {
+    if (worked.isNegative || !_end.isAfter(_start)) {
+      return 'Fix the end time to calculate earnings.';
+    }
+    if (!settings.hasRate) {
+      return 'Worked: ${shiftDuration(worked)}. Set an hourly rate to see earnings.';
+    }
+    final amount =
+        Shift.earningsFor(worked.inMilliseconds, settings.hourlyRate);
+    final rate = formatMoney(settings.hourlyRate, settings.currencyCode);
+    final earned = formatMoney(amount, settings.currencyCode);
+    return '${shiftDuration(worked)} × $rate = $earned';
   }
 
   List<String> _split(String value, Pattern separator) => value
@@ -100,8 +116,10 @@ class _ShiftFormScreenState extends State<ShiftFormScreen> {
   @override
   Widget build(BuildContext context) {
     final store = context.watch<ShiftProvider>();
+    final settings = context.watch<SettingsProvider>();
     final busy = store.isSaving || store.isLoading;
     final worked = _end.difference(_start) - _pause;
+    final earningsLine = _earningsLine(worked, settings);
     return PopScope(
         canPop: !store.isSaving,
         child: Scaffold(
@@ -166,9 +184,7 @@ class _ShiftFormScreenState extends State<ShiftFormScreen> {
                           : null;
                     }),
                 const SizedBox(height: 20),
-                Text(worked.isNegative
-                    ? 'Check the selected times.'
-                    : 'Worked: ${shiftDuration(worked)}'),
+                Text(earningsLine),
                 if (store.errorMessage != null)
                   Padding(
                       padding: const EdgeInsets.symmetric(vertical: 12),

@@ -28,4 +28,22 @@ class AppSettings {
 
   /// False for a new account, which is sent to Rate setup after sign-up.
   bool get hasRate => hourlyRate > 0;
+
+  AppSettings copyWith({
+    double? hourlyRate,
+    String? currencyCode,
+    ThemeMode? themeMode,
+    bool? notificationsEnabled,
+    bool? appLockEnabled,
+    DateTime? lastSyncAt,
+  }) {
+    return AppSettings(
+      hourlyRate: hourlyRate ?? this.hourlyRate,
+      currencyCode: currencyCode ?? this.currencyCode,
+      themeMode: themeMode ?? this.themeMode,
+      notificationsEnabled: notificationsEnabled ?? this.notificationsEnabled,
+      appLockEnabled: appLockEnabled ?? this.appLockEnabled,
+      lastSyncAt: lastSyncAt ?? this.lastSyncAt,
+    );
+  }
 }
