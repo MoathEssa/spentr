@@ -47,6 +47,9 @@ abstract final class AppRoutes {
       shiftForm => ShiftFormScreen(
           shift:
               settings.arguments is Shift ? settings.arguments as Shift : null,
+          initialDay: settings.arguments is DateTime
+              ? settings.arguments as DateTime
+              : null,
         ),
       rateSettings => const RateSettingsScreen(),
       export => const ExportScreen(),

@@ -10,12 +10,17 @@ class ShiftProvider extends ChangeNotifier {
   bool _isLoading = false;
   bool _isSaving = false;
   String? _errorMessage;
+  bool _loadFailed = false;
   bool _disposed = false;
 
   List<Shift> get shifts => List.unmodifiable(_shifts);
   bool get isLoading => _isLoading;
   bool get isSaving => _isSaving;
   String? get errorMessage => _errorMessage;
+
+  /// True when the last [load] failed, so screens can tell "could not read
+  /// the database" apart from a failed save or delete.
+  bool get hasLoadError => _loadFailed;
 
   Shift? findById(int id) {
     for (final shift in _shifts) {
@@ -35,7 +40,9 @@ class ShiftProvider extends ChangeNotifier {
     _emit();
     try {
       _shifts = await _repository.getAll();
+      _loadFailed = false;
     } catch (_) {
+      _loadFailed = true;
       _errorMessage = 'Could not load saved shifts. Please retry.';
     } finally {
       _isLoading = false;

@@ -8,8 +8,11 @@ import '../../state/settings_provider.dart';
 import '../../state/shift_provider.dart';
 
 class ShiftFormScreen extends StatefulWidget {
-  const ShiftFormScreen({super.key, this.shift});
+  const ShiftFormScreen({super.key, this.shift, this.initialDay});
   final Shift? shift;
+
+  /// New shifts opened from a calendar day start on that day (09:00–10:00).
+  final DateTime? initialDay;
   @override
   State<ShiftFormScreen> createState() => _ShiftFormScreenState();
 }
@@ -26,7 +29,11 @@ class _ShiftFormScreenState extends State<ShiftFormScreen> {
   @override
   void initState() {
     super.initState();
-    _end = widget.shift?.end.toLocal() ?? DateTime.now();
+    final day = widget.initialDay;
+    final defaultEnd = day == null
+        ? DateTime.now()
+        : DateTime(day.year, day.month, day.day, 10);
+    _end = widget.shift?.end.toLocal() ?? defaultEnd;
     _start = widget.shift?.start.toLocal() ??
         _end.subtract(const Duration(hours: 1));
     _note = TextEditingController(text: widget.shift?.note ?? '');

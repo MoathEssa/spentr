@@ -481,9 +481,8 @@ void main() {
       await tester.pumpAndSettle();
       await tester.tap(find.text('Sign in'));
       await tester.pumpAndSettle();
-      await tester.tap(find.widgetWithText(NavigationDestination, 'History'));
-      await tester.pumpAndSettle();
 
+      // Period totals are on the Home dashboard.
       expect(
         tester.widget<Text>(find.byKey(const Key('earnings-today'))).data,
         'SAR 15.00',
@@ -525,13 +524,15 @@ void main() {
       await tester.pumpAndSettle();
       expect(repo.records.single.toMap(), before);
 
-      await tester.tap(find.widgetWithText(NavigationDestination, 'History'));
+      await tester.tap(find.widgetWithText(NavigationDestination, 'Home'));
       await tester.pumpAndSettle();
       expect(
         tester.widget<Text>(find.byKey(const Key('earnings-all'))).data,
         'SAR 30.00',
       );
 
+      await tester.tap(find.widgetWithText(NavigationDestination, 'History'));
+      await tester.pumpAndSettle();
       await tester.tap(find.text('Partial hour'));
       await tester.pumpAndSettle();
       expect(find.text('SAR 30.00 · SAR 20.00 / hour'), findsOneWidget);
@@ -541,8 +542,13 @@ void main() {
       await tester.tap(find.widgetWithText(FilledButton, 'Delete shift'));
       await tester.pumpAndSettle();
       expect(find.text('No shifts yet. Add your first shift.'), findsOneWidget);
-      expect(find.byKey(const Key('earnings-all')), findsNothing);
       expect(repo.records.single.isDeleted, isTrue);
+      await tester.tap(find.widgetWithText(NavigationDestination, 'Home'));
+      await tester.pumpAndSettle();
+      expect(
+        tester.widget<Text>(find.byKey(const Key('earnings-all'))).data,
+        'SAR 0.00',
+      );
     });
 
     testWidgets('shifts do not show money before a rate is saved',
@@ -562,13 +568,14 @@ void main() {
       await tester.pumpAndSettle();
       await tester.tap(find.text('Sign in'));
       await tester.pumpAndSettle();
-      await tester.tap(find.widgetWithText(NavigationDestination, 'History'));
-      await tester.pumpAndSettle();
-      expect(find.text('Rate not set'), findsOneWidget);
       expect(
         find.text('Set an hourly rate in Settings to see totals.'),
         findsOneWidget,
       );
+      expect(find.textContaining('SAR'), findsNothing);
+      await tester.tap(find.widgetWithText(NavigationDestination, 'History'));
+      await tester.pumpAndSettle();
+      expect(find.text('Rate not set'), findsOneWidget);
       expect(find.textContaining('SAR'), findsNothing);
     });
   });
