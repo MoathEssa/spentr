@@ -16,6 +16,7 @@ import 'package:spentr/ui/widgets/hourly_rate_form.dart';
 
 import 'fake_shift_repository.dart';
 import 'memory_settings_store.dart';
+import 'sign_in_helpers.dart';
 
 Shift workedShift({
   required DateTime start,
@@ -375,6 +376,7 @@ void main() {
       await tester.pumpAndSettle();
       await tester.tap(find.text('New to Spentr? Create an account'));
       await tester.pumpAndSettle();
+      await fillSignUp(tester);
       await tester.tap(find.text('Create account'));
       await tester.pumpAndSettle();
       expect(find.text('Set your hourly rate'), findsOneWidget);
@@ -407,6 +409,7 @@ void main() {
       await tester.pumpAndSettle();
       await tester.tap(find.text('New to Spentr? Create an account'));
       await tester.pumpAndSettle();
+      await fillSignUp(tester);
       await tester.tap(find.text('Create account'));
       await tester.pumpAndSettle();
 
@@ -479,8 +482,7 @@ void main() {
         ),
       ));
       await tester.pumpAndSettle();
-      await tester.tap(find.text('Sign in'));
-      await tester.pumpAndSettle();
+      await signIn(tester);
 
       // Period totals are on the Home dashboard.
       expect(
@@ -566,8 +568,7 @@ void main() {
         settingsStore: MemorySettingsStore(),
       ));
       await tester.pumpAndSettle();
-      await tester.tap(find.text('Sign in'));
-      await tester.pumpAndSettle();
+      await signIn(tester);
       expect(
         find.text('Set an hourly rate in Settings to see totals.'),
         findsOneWidget,

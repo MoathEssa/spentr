@@ -8,6 +8,7 @@ import 'package:spentr/data/models/shift.dart';
 
 import 'fake_shift_repository.dart';
 import 'memory_settings_store.dart';
+import 'sign_in_helpers.dart';
 
 /// A shift that starts at [start] (local time) and is worked for [worked].
 Shift shiftAt(
@@ -177,8 +178,7 @@ void main() {
             AppSettings(hourlyRate: rate, currencyCode: 'SAR')),
       ));
       await tester.pumpAndSettle();
-      await tester.tap(find.text('Sign in'));
-      await tester.pumpAndSettle();
+      await signIn(tester);
       return repo;
     }
 
