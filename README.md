@@ -8,31 +8,42 @@ Spentr is a time and earnings diary for freelancers and part-time programmers. O
 
 ## Team
 
-| Name | Student ID | Initial responsibility |
-|------|------------|------------------------|
-| Moath Haimour | 202182130 | ASP.NET Core Web API, SQL Server database, EF Core migrations and JWT, API client and sync |
-| Abdulkarim Hussain Althani | 201948610 | App architecture and theme, SQLite schema, state providers, session timer logic |
-| Abdulrazaq Musaab Ahmad | 202267720 | Dashboard, calendar, history and sign-in screens, shared widgets |
-| Osama Ahmed Alghamdi | 202172210 | Notifications, statistics, export to PDF/CSV/JSON, testing, documentation |
+The group has three members for Phase 3.
+
+| Name | Student ID | Phase 3 responsibility | GitHub |
+|------|------------|------------------------|--------|
+| Abdulkarim Hussain Althani | 201948610 | **1 — Data storage and shift records (E2):** Dart models, SQLite repository, `ShiftProvider`, manual entry, shift details, edit and delete, input validation | `amussab` |
+| Osama Ahmed Alghamdi | 202172210 | **2 — App foundation and earnings (E3):** Material 3 theme, Provider setup, screens and navigation, hourly rate and currency settings, earnings calculations, timer screen | `1OSDD` |
+| Moath Haimour | 202182130 | **3 — History, dashboard and integration (E4, E5):** History search, filters and sorting, dashboard connected to saved records, integration, tests and submission evidence | `MoathEssa` |
 
 ## Status
 
-**Phase 2 — User Interface and Technical Design.**
+**Phase 3 — Working Flutter Prototype** (tag `phase-3`).
 
-The Phase 1 proposal, the Phase 2 interface designs and prototype, and the runnable Flutter starter project are in the repository. The final Phase 2 PDF report is being assembled.
+The app builds and runs on Android. Every major screen from the Phase 2 design is reachable. Four of the six essential features work end to end on saved data:
+
+| # | Essential feature | Phase 3 status |
+|---|---|---|
+| E1 | Shift timer with notification | In progress — timer screen with live earnings, pause and continue; saving on Finish, restart recovery and the notification are Phase 4 |
+| E2 | Shift log and manual entry | **Implemented** |
+| E3 | Earnings (hourly rate and currency) | **Implemented** |
+| E4 | Dashboard and month calendar | **Implemented** |
+| E5 | History with search and filter | **Implemented** |
+| E6 | Account and cloud sync | Not started — sign-in is still a placeholder; data stays on the device |
+
+**4 of 6 essential features implemented (67%).** Optional features O1 (Statistics) and O2 (Export, import, app lock) are reachable placeholders.
 
 Project layout:
 
-- `app/` — Flutter client (Phase 2 starter: theme, models and placeholder navigation).
-- `backend/` — ASP.NET Core Web API (planned).
+- `app/` — Flutter client.
+- `backend/` — ASP.NET Core Web API (planned for Phase 4).
 - `Spentr-Preview.html` — standalone HTML interface prototype.
-- `docs/phase2/` — [Phase 2 technical design](docs/phase2/Group02_Phase2_Technical_Design.md) (widget plan, data model, state management, project structure) and screenshots of the starter app running on Android.
+- `docs/phase2/` — [Phase 2 technical design](docs/phase2/Group02_Phase2_Technical_Design.md) and starter-app screenshots.
+- `docs/phase3/screenshots/` — screenshots of the Phase 3 prototype running on an Android 15 phone.
 
-## Flutter Starter App
+## Run it
 
-The starter app opens and runs without compilation errors. Every main screen in the Figma navigation map exists as a placeholder that shows its purpose, the interface states designed for it, and buttons for its navigation. Real features are built in Phase 3.
-
-### Run it
+Requirements: Flutter SDK with Dart 3.6 or newer (developed with Flutter 3.27.3 and 3.47.9), and an Android device or emulator.
 
 ```bash
 cd app
@@ -40,38 +51,105 @@ flutter pub get
 flutter run
 ```
 
-Built with Flutter 3.27 / Dart 3.6. Tested on an Android 15 phone; `flutter analyze` reports no issues and `flutter test` passes.
+No account, API key or sample data is needed. On first launch:
 
-### Structure
+1. Tap **New to Spentr? Create an account → Create account**. Sign-in is a placeholder, so no details are asked.
+2. Enter an hourly rate, for example `75`, choose a currency and tap **Start using Spentr**.
+3. Add shifts from **History → Add manual shift**, or tap a day on the Home calendar and choose **Add a shift for this day**.
+
+Checks before submission:
+
+```bash
+flutter analyze   # No issues found
+flutter test      # 43 tests pass
+```
+
+## Phase 3 Features
+
+**Shift records (E2).** Manual entry with start and end date and time, client / project tags, a note and reference links. Shift details, editing and confirmed deletion (a soft delete, kept for sync). The form rejects an end time before the start time and any link that is not a full `http`/`https` URL, and keeps the input when saving fails.
+
+**Earnings (E3).** First-run rate setup and *Settings → Hourly rate & currency*. The rate must be a positive number with at most two decimals. Money is never stored: every screen computes it from the worked duration and the current rate, so changing the rate updates every shift and total at once. Settings survive restarts.
+
+**Dashboard (E4).** This month's earnings and hours; today, this week (Monday start) and all time in hours and money; *Start shift*; a month calendar where worked days are highlighted with that day's earnings (or hours before a rate is set), with previous / next month; and the five most recent shifts with *View all*. Tapping a day opens the **Day details** sheet with that day's total and shifts and *Add a shift for this day*, which opens the form on that date.
+
+**History (E5).** All saved shifts, grouped by month when sorted by date, with a summary of the listed shifts (count, hours, money).
+- **Search** — case-insensitive text search over notes.
+- **Filter sheet** — date range (inclusive, by the day the shift started) and client / project tags (a shift matches if it has any selected tag).
+- **Sort** — newest first, oldest first, longest duration, highest earnings.
+- Active filters appear as chips that can be removed one by one; the filter button shows how many are active.
+- **No results** — *No shifts match* with *Clear search & filters*.
+
+**Runtime states.** A spinner while saved shifts load; empty states on Home and History; an error message with *Retry* when the database cannot be read; *Saving…* and *Shift saved on this device* feedback; validation messages on every form.
+
+### Working end-to-end flow
+
+*History → Add manual shift → enter tags and a note → Save shift* → the shift is written to SQLite → History, the Home totals, the calendar day and the Day details sheet all update at once through `ShiftProvider` → close and reopen the app and the shift and rate are still there.
+
+## State and Data
+
+**State management: Provider** (`ChangeNotifier`), as approved in Phase 2.
+
+| Shared state | Owner | Used by |
+|---|---|---|
+| Saved shifts, loading / saving / error state, CRUD | `ShiftProvider` | Home, Day details, History, Shift details, Manual entry |
+| Hourly rate, currency, theme | `SettingsProvider` | Rate setup, Settings, Home, History, Shift details, Manual entry, Timer |
+
+Screen-only state uses `setState`: History's search text, filter and sort; the calendar month on Home; form fields; the selected tab. Search, filtering and sorting are plain Dart (`core/shift_query.dart`) and the dashboard totals come from `core/dashboard_summary.dart` and `core/period_earnings.dart`, so they are unit-tested without the UI.
+
+**Data sources.**
+
+| Data | Storage | Notes |
+|---|---|---|
+| Shifts | SQLite (`sqflite`), table `shifts`, through the `ShiftRepository` interface (`SqliteShiftRepository`) | Survives restarts; soft delete; tests use an in-memory fake |
+| Settings | `shared_preferences` through `SettingsStore` | Survives restarts |
+
+**Temporary parts.** Shifts are stored under a fixed local user id (`local-demo`) until sign-in exists. The ASP.NET Core API and sync (E6) are not connected; because screens only depend on `ShiftRepository` and `SettingsStore`, the sync layer can be added in Phase 4 without changing the screens.
+
+## Project Structure
 
 ```
 app/lib/
-  main.dart                 entry point
-  app.dart                  MaterialApp, light and dark theme, routes
+  main.dart                 loads saved settings, then starts the app
+  app.dart                  MultiProvider, MaterialApp, light and dark theme, routes
   core/
     routes.dart             named routes for every screen
     theme/                  colours and Material 3 theme from the Figma design system
+    money.dart              currencies, rate validation, money formatting
+    period_earnings.dart    today / week / month / all-time earnings
+    dashboard_summary.dart  period hours, per-day totals for the calendar
+    shift_query.dart        History search, filters and sorting
+    date_labels.dart, shift_formatters.dart
   data/
     models/                 Shift, ActiveSession, AppSettings, User, SyncStatus
-    local/                  SQLite database and settings store (Phase 3)
-    remote/                 ApiClient, AuthService, SyncService (Phase 3)
-    services/               notifications, biometrics, export (Phase 3)
-  state/                    Provider ChangeNotifiers (Phase 3)
+    repositories/           ShiftRepository interface
+    local/                  SQLite shift repository, settings store
+  state/                    ShiftProvider, SettingsProvider
   ui/
     screens/                one file per screen or bottom sheet
-    widgets/                shared widgets (placeholder view, confirm dialog)
+    widgets/                shift tile, empty state, hourly rate form, confirm dialog, placeholder view
+app/test/                   43 unit and widget tests, with an in-memory repository and settings store
 ```
-
-Navigation: Sign in → Home. `RootShell` holds the four tabs (Home, History, Statistics, Settings) in an `IndexedStack` behind a Material 3 `NavigationBar`. Other screens are pushed with named routes; Day details and Filter are modal bottom sheets.
 
 ## Packages
 
 | Package | Purpose | Licence |
 |---------|---------|---------|
-| `cupertino_icons` | Default iOS-style icon font from the Flutter template | MIT |
-| `flutter_lints` (dev) | Recommended lint rules used by `flutter analyze` | BSD-3-Clause |
+| `provider` | Shared state (`ShiftProvider`, `SettingsProvider`) | MIT |
+| `sqflite` | Local SQLite database for shifts | BSD-2-Clause |
+| `path` | Builds the database file path | BSD-3-Clause |
+| `shared_preferences` | Hourly rate, currency and other settings | BSD-3-Clause |
+| `cupertino_icons` | iOS-style icon font from the Flutter template | MIT |
+| `flutter_lints` (dev) | Lint rules used by `flutter analyze` | BSD-3-Clause |
 
-No other packages are added yet. The packages planned for Phase 3 (`provider`, `sqflite`, `shared_preferences`, `flutter_secure_storage`, `http`, `connectivity_plus`, `flutter_local_notifications`, `intl`, and for the optional features `fl_chart`, `pdf`, `printing`, `share_plus`, `file_picker`, `local_auth`) will be added to this table with their purpose and licence when they are introduced.
+Resolved versions are in `app/pubspec.lock`. The minimum versions are set so the project resolves on Flutter 3.27 as well as newer SDKs.
+
+## Known Issues and Phase 4 Work
+
+- **Timer (E1):** *Finish shift* does not save the shift yet and opens an empty Shift details screen. The running shift is not kept across an app restart, and there is no notification yet.
+- **Account and sync (E6):** sign-in and sign-up are placeholders that continue without checking anything; the API, JWT and sync are not built.
+- **Optional features:** Statistics (O1), Export / Import and App lock (O2) are placeholder screens.
+- A shift that crosses midnight is counted on the day it started, on the calendar and in the totals.
+- Search looks in notes only; client / project tags are found with the tag filter.
 
 ## UI Design and Prototype
 
@@ -95,54 +173,12 @@ Click through the screens or use the sidebar to inspect individual designs and i
 
 The prototype uses illustrative data and prepared screen transitions. Authentication, timer tracking, cloud sync, notifications, biometrics, and file export/import are simulated for design review.
 
-## Phase 3 — Shift Records Progress
-
-The shift-record feature now includes:
-
-- Manual shift creation with start/end dates and times.
-- Notes, client/project tags, and reference links.
-- Viewing and editing saved shifts.
-- Confirmed soft deletion.
-- SQLite persistence through a repository layer.
-- Shared state using ShiftProvider and ChangeNotifier.
-- Date and reference-URL validation.
-- Loading, empty, save-success, and error feedback.
-
-### Verification
-
-- All 8 automated tests passed.
-- Development environment: Flutter 3.47.9 / Dart 3.13.7.
-- Android runtime and restart-persistence verification are pending.
-- Tests use a fake repository; they do not verify the SQLite plugin on a device.
-
-### Added Packages
-
-| Package | Purpose | License |
-|---------|---------|---------|
-| provider | Shared shift state and UI updates | MIT |
-| sqflite | Local SQLite persistence | BSD-2-Clause |
-| path | Database file-path handling | BSD-3-Clause |
-| shared_preferences | Hourly rate, currency, and other settings | BSD-3-Clause |
-
-Resolved package versions are recorded in app/pubspec.lock.
-
-### Data Source and Remaining Integration
-
-Shifts are stored locally in SQLite. Deleted records are marked with
-is_deleted rather than physically removed.
-
-The repository currently uses the temporary local-demo identity.
-Real authentication and cloud synchronization remain to be integrated.
-
-History currently provides the basic records list. Search, filters, sorting,
-and integration with earnings settings are assigned to the other team members.
-
 ## AI Use
 
 As required by the course policy, we disclose the following assistance:
 
-- **Anthropic Claude** helped draft and format the Phase 1 proposal, provided small code and debugging suggestions, generated the Phase 2 Flutter starter project (placeholder screens, routes, theme and model classes), and drafted the Phase 2 technical design sections (widget plan, data model and state management plan).
+- **Anthropic Claude** helped draft and format the Phase 1 proposal, provided small code and debugging suggestions, generated the Phase 2 Flutter starter project (placeholder screens, routes, theme and model classes), and drafted the Phase 2 technical design sections (widget plan, data model and state management plan). In Phase 3 (Claude Code) it assisted Moath's part: the History search, filter and sort logic and screens, the dashboard and Day details sheet, their tests, the dependency and Android build fixes, this README, and checking the app on an Android phone.
 - **ChatGPT** helped extract the Phase 1 design context, generate initial interface designs, create the HTML prototype and Figma import script, and draft README updates.
-- **Cursor Grok** assisted the Phase 3 app foundation, hourly-rate persistence, earnings calculation, and timer earnings display. The group reviews this work, and each member remains responsible for the code they submit.
+- **Cursor Grok** assisted the Phase 3 app foundation, hourly-rate persistence, earnings calculation, and timer earnings display.
 
 The group is responsible for reviewing and revising AI-assisted material, ensuring its use follows the course policy, and accurately recording each member's actual contribution. Each member is responsible for understanding and explaining the work they submit.
