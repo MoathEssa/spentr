@@ -12,7 +12,7 @@ The group has three members for Phase 3.
 
 | Name | Student ID | Phase 3 responsibility | GitHub |
 |------|------------|------------------------|--------|
-| Abdulkarim Hussain Althani | 201948610 | **1 — Data storage and shift records (E2):** Dart models, SQLite repository, `ShiftProvider`, manual entry, shift details, edit and delete, input validation | `amussab` |
+| Abdulrazaq Musaab Ahmad | 202267720 | **1 — Data storage and shift records (E2):** Dart models, SQLite repository, `ShiftProvider`, manual entry, shift details, edit and delete, input validation | `amussab` |
 | Osama Ahmed Alghamdi | 202172210 | **2 — App foundation and earnings (E3):** Material 3 theme, Provider setup, screens and navigation, hourly rate and currency settings, earnings calculations, timer screen | `1OSDD` |
 | Moath Haimour | 202182130 | **3 — History, dashboard and integration (E4, E5):** History search, filters and sorting, dashboard connected to saved records, integration, tests and submission evidence | `MoathEssa` |
 
