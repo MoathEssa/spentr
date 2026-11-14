@@ -9,14 +9,15 @@ import '../../core/shift_formatters.dart';
 import '../../data/models/active_session.dart';
 import '../../data/models/shift.dart';
 import '../../state/settings_provider.dart';
+import '../../state/shift_provider.dart';
 import '../widgets/confirm_dialog.dart';
 
 /// Shows the open shift's worked time and live earnings.
 ///
 /// Elapsed time comes from [ActiveSession] timestamps. The one-second ticker
-/// only redraws the screen. Saving the session across restarts, the ongoing
-/// notification, and turning Finish into a stored shift belong to
-/// SessionProvider, which is not in the project yet.
+/// only redraws the screen. Finish saves the session as a [Shift] through
+/// ShiftProvider. Keeping the running session across restarts and the ongoing
+/// notification belong to SessionProvider, which is Phase 4 work.
 class SessionTimerScreen extends StatefulWidget {
   const SessionTimerScreen({
     super.key,
@@ -108,9 +109,37 @@ class _SessionTimerScreenState extends State<SessionTimerScreen>
       confirmLabel: 'Finish & save shift',
       cancelLabel: 'Keep tracking',
     );
-    if (confirmed && mounted) {
-      Navigator.pushReplacementNamed(context, AppRoutes.shiftDetail);
+    if (!confirmed || !mounted) return;
+    // Turn the session into a saved shift; paused time is already excluded
+    // from the worked duration.
+    final now = _now();
+    final end = now.isAfter(_session.start)
+        ? now
+        : _session.start.add(const Duration(seconds: 1));
+    final worked = _worked(now).inMilliseconds;
+    final windowMs = end.difference(_session.start).inMilliseconds;
+    final shift = Shift(
+      start: _session.start.toUtc(),
+      end: end.toUtc(),
+      durationMs: worked > windowMs ? windowMs : worked,
+      note: _session.note,
+      tags: _session.tags,
+      updatedAt: now.toUtc(),
+    );
+    final store = context.read<ShiftProvider>();
+    final messenger = ScaffoldMessenger.of(context);
+    final saved = await store.save(shift);
+    if (!mounted) return;
+    if (saved == null) {
+      messenger.showSnackBar(SnackBar(
+          content: Text(store.errorMessage ??
+              'Could not save this shift. Please try again.')));
+      return;
     }
+    messenger.showSnackBar(
+        const SnackBar(content: Text('Shift saved on this device.')));
+    Navigator.pushReplacementNamed(context, AppRoutes.shiftDetail,
+        arguments: saved.id);
   }
 
   Future<void> _cancel() async {
