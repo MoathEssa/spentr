@@ -24,12 +24,12 @@ The app builds and runs on Android. Every major screen from the Phase 2 design i
 
 | # | Essential feature | Phase 3 status |
 |---|---|---|
-| E1 | Shift timer with notification | In progress — timer screen with live earnings, pause and continue; saving on Finish, restart recovery and the notification are Phase 4 |
+| E1 | Shift timer with notification | In progress — start, pause, continue, live earnings, and *Finish* saves the shift; restart recovery and the notification are Phase 4 |
 | E2 | Shift log and manual entry | **Implemented** |
 | E3 | Earnings (hourly rate and currency) | **Implemented** |
 | E4 | Dashboard and month calendar | **Implemented** |
 | E5 | History with search and filter | **Implemented** |
-| E6 | Account and cloud sync | Not started — sign-in is still a placeholder; data stays on the device |
+| E6 | Account and cloud sync | Not started — the Sign in / Sign up form validates input, but there is no server account yet; data stays on the device |
 
 **4 of 6 essential features implemented (67%).** Optional features O1 (Statistics) and O2 (Export, import, app lock) are reachable placeholders.
 
@@ -53,7 +53,7 @@ flutter run
 
 No account, API key or sample data is needed. On first launch:
 
-1. Tap **New to Spentr? Create an account → Create account**. Sign-in is a placeholder, so no details are asked.
+1. Tap **New to Spentr? Create an account**, enter any valid email and a password of at least 8 characters (twice), and tap **Create account**. Accounts are not checked against a server yet.
 2. Enter an hourly rate, for example `75`, choose a currency and tap **Start using Spentr**.
 3. Add shifts from **History → Add manual shift**, or tap a day on the Home calendar and choose **Add a shift for this day**.
 
@@ -61,7 +61,7 @@ Checks before submission:
 
 ```bash
 flutter analyze   # No issues found
-flutter test      # 43 tests pass
+flutter test      # 45 tests pass
 ```
 
 ## Phase 3 Features
@@ -78,6 +78,10 @@ flutter test      # 43 tests pass
 - **Sort** — newest first, oldest first, longest duration, highest earnings.
 - Active filters appear as chips that can be removed one by one; the filter button shows how many are active.
 - **No results** — *No shifts match* with *Clear search & filters*.
+
+**Sign in / Sign up.** Email and password fields with validation (valid email; password required; at least 8 characters and a matching confirmation when creating an account), a show / hide password button, and switching between the two modes. A valid form continues to Rate setup or Home.
+
+**Timer (E1, partly).** *Start shift* opens the timer with live earnings; pause and continue; *Finish shift* saves the worked time (pauses excluded) as a shift and opens its Shift details.
 
 **Runtime states.** A spinner while saved shifts load; empty states on Home and History; an error message with *Retry* when the database cannot be read; *Saving…* and *Shift saved on this device* feedback; validation messages on every form.
 
@@ -127,7 +131,7 @@ app/lib/
   ui/
     screens/                one file per screen or bottom sheet
     widgets/                shift tile, empty state, hourly rate form, confirm dialog, placeholder view
-app/test/                   43 unit and widget tests, with an in-memory repository and settings store
+app/test/                   45 unit and widget tests, with an in-memory repository and settings store
 ```
 
 ## Packages
@@ -145,8 +149,8 @@ Resolved versions are in `app/pubspec.lock`. The minimum versions are set so the
 
 ## Known Issues and Phase 4 Work
 
-- **Timer (E1):** *Finish shift* does not save the shift yet and opens an empty Shift details screen. The running shift is not kept across an app restart, and there is no notification yet.
-- **Account and sync (E6):** sign-in and sign-up are placeholders that continue without checking anything; the API, JWT and sync are not built.
+- **Timer (E1):** the running shift is not kept if the app is closed before *Finish*, and there is no ongoing notification yet.
+- **Account and sync (E6):** the Sign in / Sign up form only validates the email and password locally; the API, JWT and sync are not built.
 - **Optional features:** Statistics (O1), Export / Import and App lock (O2) are placeholder screens.
 - A shift that crosses midnight is counted on the day it started, on the calendar and in the totals.
 - Search looks in notes only; client / project tags are found with the tag filter.
@@ -177,7 +181,7 @@ The prototype uses illustrative data and prepared screen transitions. Authentica
 
 As required by the course policy, we disclose the following assistance:
 
-- **Anthropic Claude** helped draft and format the Phase 1 proposal, provided small code and debugging suggestions, generated the Phase 2 Flutter starter project (placeholder screens, routes, theme and model classes), and drafted the Phase 2 technical design sections (widget plan, data model and state management plan). In Phase 3 (Claude Code) it assisted Moath's part: the History search, filter and sort logic and screens, the dashboard and Day details sheet, their tests, the dependency and Android build fixes, this README, and checking the app on an Android phone.
+- **Anthropic Claude** helped draft and format the Phase 1 proposal, provided small code and debugging suggestions, generated the Phase 2 Flutter starter project (placeholder screens, routes, theme and model classes), and drafted the Phase 2 technical design sections (widget plan, data model and state management plan). In Phase 3 (Claude Code) it assisted Moath's part: the History search, filter and sort logic and screens, the dashboard and Day details sheet, the Sign in form and saving a shift on timer Finish, their tests, the dependency and Android build fixes, this README, and checking the app on an Android phone.
 - **ChatGPT** helped extract the Phase 1 design context, generate initial interface designs, create the HTML prototype and Figma import script, and draft README updates.
 - **Cursor Grok** assisted the Phase 3 app foundation, hourly-rate persistence, earnings calculation, and timer earnings display.
 
