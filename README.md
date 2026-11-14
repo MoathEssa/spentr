@@ -95,6 +95,47 @@ Click through the screens or use the sidebar to inspect individual designs and i
 
 The prototype uses illustrative data and prepared screen transitions. Authentication, timer tracking, cloud sync, notifications, biometrics, and file export/import are simulated for design review.
 
+## Phase 3 — Shift Records Progress
+
+The shift-record feature now includes:
+
+- Manual shift creation with start/end dates and times.
+- Notes, client/project tags, and reference links.
+- Viewing and editing saved shifts.
+- Confirmed soft deletion.
+- SQLite persistence through a repository layer.
+- Shared state using ShiftProvider and ChangeNotifier.
+- Date and reference-URL validation.
+- Loading, empty, save-success, and error feedback.
+
+### Verification
+
+- All 8 automated tests passed.
+- Development environment: Flutter 3.47.9 / Dart 3.13.7.
+- Android runtime and restart-persistence verification are pending.
+- Tests use a fake repository; they do not verify the SQLite plugin on a device.
+
+### Added Packages
+
+| Package | Purpose | License |
+|---------|---------|---------|
+| provider | Shared shift state and UI updates | MIT |
+| sqflite | Local SQLite persistence | BSD-2-Clause |
+| path | Database file-path handling | BSD-3-Clause |
+
+Resolved package versions are recorded in app/pubspec.lock.
+
+### Data Source and Remaining Integration
+
+Shifts are stored locally in SQLite. Deleted records are marked with
+is_deleted rather than physically removed.
+
+The repository currently uses the temporary local-demo identity.
+Real authentication and cloud synchronization remain to be integrated.
+
+History currently provides the basic records list. Search, filters, sorting,
+and integration with earnings settings are assigned to the other team members.
+
 ## AI Use
 
 As required by the course policy, we disclose the following assistance:
