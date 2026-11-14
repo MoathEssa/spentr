@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../data/models/shift.dart';
 import '../ui/screens/export_screen.dart';
 import '../ui/screens/import_review_screen.dart';
 import '../ui/screens/lock_screen.dart';
@@ -11,11 +12,6 @@ import '../ui/screens/shift_detail_screen.dart';
 import '../ui/screens/shift_form_screen.dart';
 import '../ui/screens/sign_in_screen.dart';
 
-/// Named routes for every screen in the navigation map.
-///
-/// The four tab routes all open [RootShell]; the tab is chosen with
-/// [RootShell.initialIndex]. Day details and Filter are bottom sheets, so
-/// they have no route.
 abstract final class AppRoutes {
   static const signIn = '/';
   static const rateSetup = '/rate-setup';
@@ -45,15 +41,27 @@ abstract final class AppRoutes {
       AppRoutes.settings =>
         RootShell(initialIndex: _tabs.indexOf(settings.name!)),
       timer => const SessionTimerScreen(),
-      shiftDetail => const ShiftDetailScreen(),
-      shiftForm => ShiftFormScreen(editing: settings.arguments == true),
+      shiftDetail => ShiftDetailScreen(
+          shiftId: settings.arguments is int ? settings.arguments as int : null,
+        ),
+      shiftForm => ShiftFormScreen(
+          shift:
+              settings.arguments is Shift ? settings.arguments as Shift : null,
+        ),
       rateSettings => const RateSettingsScreen(),
       export => const ExportScreen(),
       importReview => const ImportReviewScreen(),
       lock => const LockScreen(),
       _ => null,
     };
-    if (page == null) return null;
-    return MaterialPageRoute(settings: settings, builder: (_) => page);
+
+    if (page == null) {
+      return null;
+    }
+
+    return MaterialPageRoute<void>(
+      settings: settings,
+      builder: (_) => page,
+    );
   }
 }

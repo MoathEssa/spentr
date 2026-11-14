@@ -2,10 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:spentr/app.dart';
+import 'fake_shift_repository.dart';
 
 void main() {
   testWidgets('starts on Sign in and reaches every tab', (tester) async {
-    await tester.pumpWidget(const SpentrApp());
+    await tester.pumpWidget(SpentrApp(shiftRepository: FakeShiftRepository()));
     expect(find.text('Welcome to Spentr'), findsOneWidget);
 
     await tester.tap(find.text('Sign in'));
@@ -21,7 +22,7 @@ void main() {
 
   testWidgets('Start shift opens the timer and Cancel returns home',
       (tester) async {
-    await tester.pumpWidget(const SpentrApp());
+    await tester.pumpWidget(SpentrApp(shiftRepository: FakeShiftRepository()));
     await tester.tap(find.text('Sign in'));
     await tester.pumpAndSettle();
 

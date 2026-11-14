@@ -64,7 +64,7 @@ abstract final class AppTheme {
         surfaceTintColor: Colors.transparent,
         centerTitle: false,
       ),
-      cardTheme: CardTheme(
+      cardTheme: CardThemeData(
         color: scheme.surface,
         elevation: 0,
         shape: RoundedRectangleBorder(
